@@ -238,8 +238,6 @@
     }, { once: true });
 
     
-    let usesPhotos = []
-
     let background1 = document.getElementById("1")
     let background2 = document.getElementById("2")
     let load = document.getElementById("load")
@@ -248,20 +246,12 @@
     
     let mode = 0
 
-    let rand = 1
-
     let animOptions = {
         duration: 3000, 
         fill: 'forwards'
     }
 
     function slide() {
-        if (usesPhotos.length == 0) {
-            for (let i = 0; i < photos.length; i++) {
-                usesPhotos[i] = photos[i]
-            }
-        }
-
         if (mode == 0) {
             mode = 1
 
@@ -288,17 +278,14 @@
             ],animOptions)
         }
 
-        rand = Math.floor(Math.random() * (usesPhotos.length - 1))
-
-        load.style.backgroundImage = 'url("' + usesPhotos[rand] + '")'
-
-        usesPhotos.splice(rand,1)
+        const randomIndex = Math.floor(Math.random() * photos.length)
+        load.style.backgroundImage = 'url("' + photos[randomIndex] + '")'
     }
 
     slide()
     slide()
 
-    setInterval(slide,3000) 
+    setInterval(slide,5000) 
 
     // Random text rotation functionality
     let usedTexts = []

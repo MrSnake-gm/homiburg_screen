@@ -3,11 +3,20 @@
 <script>
     let photos = [
         "imgs/1.png",
-        "imgs/2.png",
-        "imgs/3.png",
-        "imgs/4.png",
-        "imgs/5.png",
-        "imgs/6.jpg",
+    ]
+    
+    // Random text phrases - you can customize this list
+    let randomTexts = [
+        "Добро пожаловать на HOMIBURG.COM",
+        "А вы знали то что пинать можно, забиндив это - bind b hg_kick",
+        "Если раунд затягивается, попросите администрацию провести голосование за скип",
+        "С помощью привелегии MEGASPONSOR вы разблокируете +15 донатный скинов из гардероба",
+        "Заводите друзей, и рекомендуйте наш проект другим друзьям",
+        "Стань лидером по наигранным часам на сервере HOMIBURG!",
+        "Почему HOMIBURG? Да потому-что создатель любит бургеры",
+        "Вы знали, то что сервер был основан и открыт - 06.02.2026 году!",
+        "Будь чилловым парнем)",
+        "Постоянно обновляем и улучшаем игру"
     ]
 </script>
 
@@ -55,6 +64,55 @@
         body, .server-title, #servername, #mapname, #textstatus, .log {
             font-family: 'Times New Roman', Times, serif !important;
         }
+
+        /* Random text container styles */
+        .random-text-container {
+            position: absolute;
+            top: 50px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            text-align: center;
+            z-index: 10;
+        }
+
+        .random-text {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
+            position: absolute;
+            width: 100%;
+            left: 0;
+        }
+
+        .random-text.active {
+            opacity: 1;
+        }
+
+        /* Image container styles */
+        .image-container {
+            position: absolute;
+            left: 150px;
+            top: 40%;
+            transform: translateY(-50%);
+            z-index: 10;
+        }
+
+        .side-image {
+            width: 350px;
+            height: auto;
+            border-radius: 8px;
+            opacity: 0.9;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+
+        .side-image:hover {
+            opacity: 1;
+            transform: scale(1.05);
+        }
     </style>
 
     <title>HOMIBURG SCREEN</title>
@@ -63,7 +121,7 @@
 <body>
 
     <audio id="backgroundMusic" loop>
-        <source src="" type="audio/mpeg">
+        <source src="music/loadingv2.mp3" type="audio/mpeg">
 
     </audio>
 
@@ -98,6 +156,16 @@
     z-index: -1;
     opacity: 0;
     "></div>
+
+    <!-- Random text container -->
+    <div class="random-text-container">
+        <div id="randomText" class="random-text active"></div>
+    </div>
+
+    <!-- Side image container -->
+    <div class="image-container">
+        <img src="logos/qr-code.png" alt="Logo" class="side-image" id="sideImage">
+    </div>
 
     <div style="
         height: 50%;
@@ -144,17 +212,17 @@
     
 
     backgroundMusic.addEventListener('loadedmetadata', function() {
-        backgroundMusic.volume = 0.01;
+        backgroundMusic.volume = 0.05;
     });
     
 
     backgroundMusic.addEventListener('play', function() {
-        backgroundMusic.volume = 0.01; 
+        backgroundMusic.volume = 0.05; 
     });
 
     window.addEventListener('load', function() {
 
-        backgroundMusic.volume = 0.01; 
+        backgroundMusic.volume = 0.05; 
         backgroundMusic.play().catch(error => {
             console.log("");
         });
@@ -162,7 +230,7 @@
     
     document.addEventListener('click', function() {
         if (backgroundMusic.paused) {
-            backgroundMusic.volume = 0.02; 
+            backgroundMusic.volume = 0.05; 
             backgroundMusic.play();
         }
     }, { once: true });
@@ -229,6 +297,45 @@
     slide()
 
     setInterval(slide,3000) 
+
+    // Random text rotation functionality
+    let usedTexts = []
+    let currentTextIndex = -1
+
+    function getRandomText() {
+        if (usedTexts.length === 0) {
+            usedTexts = [...randomTexts]
+        }
+
+        let randomIndex
+        do {
+            randomIndex = Math.floor(Math.random() * usedTexts.length)
+        } while (randomTexts.indexOf(usedTexts[randomIndex]) === currentTextIndex && usedTexts.length > 1)
+
+        const text = usedTexts[randomIndex]
+        usedTexts.splice(randomIndex, 1)
+        currentTextIndex = randomTexts.indexOf(text)
+        return text
+    }
+
+    function rotateText() {
+        const textElement = document.getElementById('randomText')
+        
+        // Fade out current text
+        textElement.classList.remove('active')
+        
+        // Wait for fade out animation to complete before changing text
+        setTimeout(() => {
+            textElement.textContent = getRandomText()
+            textElement.classList.add('active')
+        }, 1000)
+    }
+
+    // Initialize with first text
+    document.getElementById('randomText').textContent = getRandomText()
+
+    // Rotate text every 15 seconds
+    setInterval(rotateText, 15000)
 
     let fileNeeded = 0
     let fileTotal = 0
